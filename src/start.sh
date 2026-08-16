@@ -158,29 +158,29 @@ PYHF
   }
 
   # ============ Krea 2 Turbo (fp8, Comfy-Org) + Identity Edit LoRA ============
-  # Todos públicos (não-gated). ~20,5GB no total; cabe na RTX 4090 (24GB).
-  KREA_UNET="$VOLUME/models/diffusion_models/krea2_turbo_fp8_scaled.safetensors"
-  KREA_UNET_URL="https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors"
-  if ! check_size "$KREA_UNET" 13000000000; then
-    download_with_validation "$KREA_UNET" 13000000000 "$KREA_UNET_URL" "Krea 2 Turbo fp8" || exit 1
-  fi
-  KREA_TE="$VOLUME/models/text_encoders/qwen3vl_4b_fp8_scaled.safetensors"
-  KREA_TE_URL="https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors"
-  if ! check_size "$KREA_TE" 5200000000; then
-    download_with_validation "$KREA_TE" 5200000000 "$KREA_TE_URL" "Qwen3-VL 4B fp8 (text encoder)" || exit 1
-  fi
-  KREA_VAE="$VOLUME/models/vae/qwen_image_vae.safetensors"
-  KREA_VAE_URL="https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors"
-  if ! check_size "$KREA_VAE" 250000000; then
-    download_with_validation "$KREA_VAE" 250000000 "$KREA_VAE_URL" "Qwen Image VAE" || exit 1
-  fi
-  # LoRA Identity Edit v1.2 (conradlocke) — 1,8GB. Versão configurável via env.
+  # Padrão: o volume é SEMEADO fora do serverless (scripts/seed_volume.sh num pod) —
+  # aqui só VALIDAMOS e falhamos rápido se faltar (não pagar GPU parada baixando).
+  # KREA_BOOTSTRAP_DOWNLOAD=1 reativa o download no worker (POC/1ª carga).
   KREA_LORA_NAME="${KREA_LORA_NAME:-krea2_identity_edit_v1_2.safetensors}"
-  KREA_LORA="$VOLUME/models/loras/$KREA_LORA_NAME"
-  KREA_LORA_URL="https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/$KREA_LORA_NAME"
-  if ! check_size "$KREA_LORA" 400000000; then
-    download_with_validation "$KREA_LORA" 400000000 "$KREA_LORA_URL" "Krea2 Identity Edit LoRA" || exit 1
-  fi
+  KREA_FILES=(
+    "$VOLUME/models/diffusion_models/krea2_turbo_fp8_scaled.safetensors|13000000000|https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_fp8_scaled.safetensors|Krea 2 Turbo fp8"
+    "$VOLUME/models/text_encoders/qwen3vl_4b_fp8_scaled.safetensors|5200000000|https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors|Qwen3-VL 4B fp8"
+    "$VOLUME/models/vae/qwen_image_vae.safetensors|250000000|https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors|Qwen Image VAE"
+    "$VOLUME/models/loras/$KREA_LORA_NAME|400000000|https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/$KREA_LORA_NAME|Krea2 Identity Edit LoRA"
+  )
+  MISSING=0
+  for spec in "${KREA_FILES[@]}"; do
+    IFS='|' read -r f min url label <<< "$spec"
+    if check_size "$f" "$min"; then
+      echo "worker-krea2-edit: ok $label"
+    elif [ "${KREA_BOOTSTRAP_DOWNLOAD:-0}" = "1" ]; then
+      download_with_validation "$f" "$min" "$url" "$label" || exit 1
+    else
+      echo "worker-krea2-edit: FALTA $label ($f) — semeie o volume com scripts/seed_volume.sh (ou KREA_BOOTSTRAP_DOWNLOAD=1)" >&2
+      MISSING=1
+    fi
+  done
+  [ "$MISSING" = "0" ] || exit 1
   # ==========================================================================
 
   echo "worker-krea2-edit: Modelos prontos no volume!"

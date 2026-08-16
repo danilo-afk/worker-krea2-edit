@@ -4,7 +4,7 @@ RunPod Serverless + ComfyUI: **Krea 2 Turbo (fp8) + LoRA Identity Edit v1.2** �
 (restore/re-stage de pessoa, compor pessoa em cena, edições locais) via nós `comfyui-krea2edit`.
 
 - Custom node: fork `danilo-afk/comfyui-krea2edit` (pinado por SHA no Dockerfile).
-- Modelos (públicos, ~20,5GB) baixados pelo `start.sh` pro network volume: `Comfy-Org/Krea-2`
+- Modelos (públicos, ~20,5GB) no network volume — **semear UMA vez fora do serverless** com `scripts/seed_volume.sh` (pod da mesma região, volume em `/workspace`); o `start.sh` só valida e falha rápido se faltar (`KREA_BOOTSTRAP_DOWNLOAD=1` reativa o download no worker): `Comfy-Org/Krea-2`
   (`krea2_turbo_fp8_scaled`, `qwen3vl_4b_fp8_scaled`, `qwen_image_vae`) + `conradlocke/krea2-identity-edit` v1.2.
 - GPU: RTX 4090 (24GB) serve.
 
