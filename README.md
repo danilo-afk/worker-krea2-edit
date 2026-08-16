@@ -19,3 +19,10 @@ RunPod Serverless + ComfyUI: **Krea 2 Turbo (fp8) + LoRA Identity Edit v1.2** �
 
 ## Output
 `{"images": [{"filename", "type": "base64", "data"}]}`.
+
+## POC validada (2026-08-16)
+Endpoint `qd7bf3ra5erp63` (RTX 4090, volume `p79ybse2ph` US-IL-1). Warm: 22–45s/img; cold (volume semeado): ~4,5 min.
+`dev_reference/run_test.py restore|vamp|two [refine]` (RUNPOD_KEY_FILE aponta p/ arquivo com a chave `rpa_…`).
+Aprendizados: LoRA preserva o resto da imagem quase pixel-a-pixel (moldura/borda NÃO some — cropar antes);
+2 refs = identidades fortes (~1MP); `refine` deixa a pele "dura" (opt-in). Após build novo: recycle
+(`workersMax 0→1`) — o Job API pode responder `ENDPOINT_PAUSED` por ~1 min após o PATCH (propagação).
