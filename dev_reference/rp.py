@@ -3,7 +3,7 @@ import json, sys, re, requests
 def key():
     for l in open('os.environ.get("RUNPOD_KEY_FILE","")'):
         m = re.search(r'(rpa_[A-Za-z0-9_-]{20,})', l)
-        if m and m.group(1).startswith('rpa_BJWV'): return m.group(1)
+        if m and m.group(1).startswith(os.environ.get('RUNPOD_KEY_PREFIX','rpa_')): return m.group(1)
     for l in open('os.environ.get("RUNPOD_KEY_FILE","")'):
         m = re.search(r'(rpa_[A-Za-z0-9_-]{20,})', l)
         if m: return m.group(1)
