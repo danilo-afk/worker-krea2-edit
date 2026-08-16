@@ -1,0 +1,8 @@
+{
+  "input": {
+    "prompt": "Restore and enhance this portrait: same person, sharp photorealistic detail, natural skin texture, crisp hair, soft studio light. Keep identity, framing and background.",
+    "image_urls": ["https://raw.githubusercontent.com/comfyanonymous/ComfyUI/master/input/example.png"],
+    "steps": 10,
+    "ref_boost": 4
+  }
+}

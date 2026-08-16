@@ -1,0 +1,9 @@
+runpod_worker_krea2_edit:
+  base_path: /runpod-volume
+  checkpoints: models/checkpoints/
+  clip: models/clip/
+  loras: models/loras/
+  vae: models/vae/
+  unet: models/unet/
+  text_encoders: models/text_encoders/
+  diffusion_models: models/diffusion_models/
