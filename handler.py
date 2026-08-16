@@ -573,7 +573,10 @@ def build_workflow_from_prompt(job_input):
         v = job_input.get(k)
         return int(v) if v not in (None, "") else d
 
-    seed = _i("seed", 42)
+    # Seed aleatória por padrão: re-rodar o nó gera variação (seed fixa = mesma
+    # imagem + cache do ComfyUI). `seed` explícito continua determinístico.
+    import random as _random
+    seed = _i("seed", _random.randint(0, 2**31 - 1))
     steps = _i("steps", 10)
     cfg = _f("cfg", 1.0)
     sampler = job_input.get("sampler") or "euler"

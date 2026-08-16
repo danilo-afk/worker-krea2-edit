@@ -26,3 +26,8 @@ Endpoint `qd7bf3ra5erp63` (RTX 4090, volume `p79ybse2ph` US-IL-1). Warm: 22–45
 Aprendizados: LoRA preserva o resto da imagem quase pixel-a-pixel (moldura/borda NÃO some — cropar antes);
 2 refs = identidades fortes (~1MP); `refine` deixa a pele "dura" (opt-in). Após build novo: recycle
 (`workersMax 0→1`) — o Job API pode responder `ENDPOINT_PAUSED` por ~1 min após o PATCH (propagação).
+
+## Evals (`dev_reference/eval_krea2.py`)
+Matriz prompt PT/EN × ref_boost 4/2/1 sobre um retrato de referência, julgada por VLM (identidade, obediência) + diff perceptual.
+Env: `RUNPOD_KEY_FILE`, `GEMINI_API_KEY`, `EVAL_REF_IMAGE`. Resultado 2026-08-16: re-encenar a partir de retrato = 6/6 OK (PT ok);
+recolor de roupa é instável; "replace" + ref_boost baixo pode remover roupa (manter default 4).
